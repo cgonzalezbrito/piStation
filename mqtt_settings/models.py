@@ -1,3 +1,9 @@
 from django.db import models
 
-# Create your models here.
+class Field(models.Model):
+    """Model field"""
+    name = models.CharField(max_lengh=200, help_text='Enter field type')
+
+    def __str__(self):
+        """String for field"""
+        return self.name
