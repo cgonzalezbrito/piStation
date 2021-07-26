@@ -28,6 +28,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('mqtt_settings/', include('mqtt_settings.urls')),
-    path('', RedirectView.as_view(url='mqtt_settings/')),
+    path('mqtt/', include('mqtt.urls')),
+    path('', RedirectView.as_view(url='mqtt/')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
