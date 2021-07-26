@@ -92,9 +92,15 @@ class Field(models.Model):
 
 class Fields(models.Model):
     """Fields = topic + field"""
-    Topic = models.ForeignKey(
+    topic = models.ForeignKey(
             'Topic',
             on_delete = models.SET_NULL,
             null = True,
             )
+    field = models.ManyToManyField(
+            'Field',
+            )
 
+    def __str__(self):
+        """String for Topic"""
+        return f'{self.topic},{self.field}'
