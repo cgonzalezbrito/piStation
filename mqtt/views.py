@@ -3,6 +3,8 @@ from django.http import HttpResponse
 
 from .models import Broker, Location, PhysicalVar, Topic, Field, Fields
 
+import tasks
+
 def index(request):
     """View function for home page"""
 
@@ -22,7 +24,8 @@ def index(request):
 #Method specified by url with ajax
 def toggle_mqtt_status(req):
     if req.method == 'GET':
-        print('VEAMOS')
+        tasks.test()
+
         # write_data.py write_csv()Call the method.
         #Of the data sent by ajax"input_data"To get by specifying.
         #write_data.write_csv(req.GET.get("input_data"))
