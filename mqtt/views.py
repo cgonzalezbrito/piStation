@@ -3,7 +3,7 @@ from django.http import HttpResponse
 
 from .models import Broker, Location, PhysicalVar, Topic, Field, Fields
 
-import tasks
+from . import tasks
 
 def index(request):
     """View function for home page"""

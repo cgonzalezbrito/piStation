@@ -13,9 +13,15 @@ app = Celery('piStation')
 #   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
+app.conf.beat_schedule = {
+        'run-me-every-ten-seconds': {
+            'task': 'mqtt.tasks.test',
+            'schedule': 10.0
+            }
+        }
+
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
-
 
 @app.task(bind=True)
 def debug_task(self):

@@ -97,6 +97,7 @@ __pypackages__/
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid
+celerybeat-schedule.db
 
 # SageMath parsed files
 *.sage.py
@@ -130,3 +131,4 @@ dmypy.json
 
 # Django
 */migrations/*
+
