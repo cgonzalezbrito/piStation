@@ -1,38 +1,5 @@
 from django.db import models
 
-class Broker(models.Model):
-    """Model Broker"""
-    broker_host = models.CharField(
-            max_length = 200,
-            unique = True, 
-            )
-    broker_port = models.IntegerField(
-            default = 1883,
-            help_text = 'default: 1883',
-            )
-    description = models.TextField(
-            blank = True,
-            help_text = 'Optional broker description',
-            )
-
-    def Host(self):
-        """Return broker host"""
-        return self.broker_host
-
-    def Port(self):
-        """Return broker port"""
-        return self.broker_port
-
-class Client(models.Model):
-    """Model Client"""
-    client_id = models.CharField(
-            max_length = 200,
-            )
-
-    def __str__(self):
-        """String for Client"""
-        return self.client_id
-
 class Location(models.Model):
     """Location"""
     place = models.CharField(
@@ -104,3 +71,33 @@ class Fields(models.Model):
     def __str__(self):
         """String for Topic"""
         return f'{self.topic},{self.field}'
+
+class Broker(models.Model):
+    """Model Broker"""
+    broker_host = models.CharField(
+            max_length = 200,
+            unique = True, 
+            )
+    broker_port = models.IntegerField(
+            default = 1883,
+            help_text = 'default: 1883',
+            )
+    client_id = models.CharField(
+            max_length = 200,
+            )
+    fields = models.ForeignKey(
+            'Fields',
+            on_delete = models.SET_NULL,
+            null = True,
+            )
+    description = models.TextField(
+            blank = True,
+            help_text = 'Optional broker description',
+            )
+    status = models.BooleanField(
+            default=False
+            )
+
+    def __str__(self):
+        """Return broker host"""
+        return self.broker_host
