@@ -15,7 +15,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.beat_schedule = {
         'run-me-every-ten-seconds': {
-            'task': 'mqtt.tasks.test',
+            'task': 'mqtt.tasks.main_device_task',
             'schedule': 10.0
             }
         }

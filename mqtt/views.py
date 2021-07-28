@@ -23,8 +23,14 @@ def index(request):
 
 #Method specified by url with ajax
 def toggle_mqtt_status(req):
+    status = Broker.objects.first().status
     if req.method == 'GET':
-        tasks.test()
+        if status:
+            tasks.mqtt_stop()
+            Broker.objects.first().status = False
+        else:
+            tasks.mqtt_start()
+            Broker.objects.first().status = True
 
         # write_data.py write_csv()Call the method.
         #Of the data sent by ajax"input_data"To get by specifying.
