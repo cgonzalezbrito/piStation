@@ -4,18 +4,20 @@
 <h1>MQTT DEVICE</h1>
 <p>Device configuration page<em>powered by:</em>!</p>
 <h2>Dynamic content</h2>
-<ul>
-  <li><strong>Broker Host:</strong> {{ broker_host }}</li>
-  <li><strong>Port:</strong> {{ broker_port }}</li>
-  <li><strong>Client ID:</strong> {{ client_id }}</li>
-</ul>
-<button type="button" onclick="clickBtn()">Start MQTT</button>
+{% for obj in data %}
+  <ul>
+    <li><strong>Broker Host:</strong> {{ obj.broker_host }}</li>
+    <li><strong>Port:</strong> {{ obj.broker_port }}</li>
+    <li><strong>Client ID:</strong> {{ obj.client_id }}</li>
+  </ul>
+  <button type="button" onclick="clickBtn(this.attributes.data.value)" data={{ obj.uuid }}>Start MQTT</button>
+{% endfor %}
 <script>
-  function clickBtn() {
+  function clickBtn(uuid) {
     $.ajax({
       url: "{% url 'toggle_mqtt_status' %}",
       method: 'GET',
-      //data:,
+      data: {"input_data": uuid},
       dataType: "text",
       contentType: "application/json",
       beforeSend: function(xhr, settings) {

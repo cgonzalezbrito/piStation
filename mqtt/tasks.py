@@ -13,11 +13,19 @@ import logging
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
-TOPICS = [
-    ("PC/test", 0),
-]
-
-TOGGLE = False
+def _read_broker_data(self):
+    global BROKER_HOST 
+    global BROKER_PORT
+    global CLIENT_ID
+    global TOPICS
+    global TOGGLE
+    TOPICS = []
+    TOGGLE = False
+    BROKER_HOST = str(self)
+    BROKER_PORT = self.broker_port
+    CLIENT_ID = str(self.client_id)
+    TOPICS.append(self.fields.topic.location.place + '/' + self.fields.topic.location.location)
+    return
 
 def on_connect(client, userdata, flags, result_code):
     if result_code == 0:
@@ -85,13 +93,15 @@ def mqtt_receive_data():
         logger.info("Listening for messages on topic '" + "'. Press Control + C to exit.")
         client.loop_start()
 
-def mqtt_start():
+def mqtt_start(uuid):
     logger.info("MQTT is starting")
 
+    # TODO: use instance not first()
     # Get Broker config Data
-    BROKER_HOST = str(Broker.objects.first())
-    BROKER_PORT = Broker.objects.first().broker_port
-    CLIENT_ID = Broker.objects.first().client_id
+    
+    qs = Broker.objects.filter(uuid=uuid)
+    broker_obj = qs[0]
+    _read_broker_data(broker_obj)
 
     # Initialize Module
     global client

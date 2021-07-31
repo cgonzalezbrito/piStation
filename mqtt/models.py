@@ -1,7 +1,14 @@
 from django.db import models
+import uuid # Required for uuid broker instance
 
 class Broker(models.Model):
     """Model Broker"""
+    uuid = models.UUIDField(
+            primary_key=True,
+            default=uuid.uuid4,
+            unique = True, 
+            help_text='Unique ID for this particular broker'
+            )
     broker_host = models.CharField(
             max_length = 200,
             unique = True, 

@@ -8,29 +8,32 @@ from . import tasks
 def index(request):
     """View function for home page"""
 
-    broker_host = Broker.objects.first()
-    broker_port = Broker.objects.first().broker_port
-    client_id = Broker.objects.first().client_id
+    data = []
+    for obj in Broker.objects.all():
+        
+        data.append({
+            'broker_host':obj,
+            'broker_port':obj.broker_port,
+            'client_id':obj.client_id,
+            'uuid': obj.uuid
+            })
 
-    context = {
-            'broker_host':broker_host,
-            'broker_port':broker_port,
-            'client_id':client_id,
-            }
+    context = { 'data': data }
 
     # Render the HTML template index.html with the data in the context variable
     return render(request, 'index.html', context=context)
 
 #Method specified by url with ajax
 def toggle_mqtt_status(req):
-    status = Broker.objects.first().status
+    qs = Broker.objects.filter(uuid=req.GET.get("input_data"))
+    status = qs[0].status
     if req.method == 'GET':
         if status:
             tasks.mqtt_stop()
-            Broker.objects.first().status = False
+            # TODO: Write database status 
         else:
-            tasks.mqtt_start()
-            Broker.objects.first().status = True
+            tasks.mqtt_start(req.GET.get("input_data"))
+            # TODO: Write database status 
 
         # write_data.py write_csv()Call the method.
         #Of the data sent by ajax"input_data"To get by specifying.
