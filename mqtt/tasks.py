@@ -14,17 +14,19 @@ import logging
 logger = logging.getLogger(__name__)
 
 def _read_broker_data(self):
+    global UUID
     global BROKER_HOST 
     global BROKER_PORT
     global CLIENT_ID
     global TOPICS
-    global TOGGLE
+    global STATUS
     TOPICS = []
-    TOGGLE = False
+    UUID = self.uuid
     BROKER_HOST = str(self)
     BROKER_PORT = self.broker_port
     CLIENT_ID = str(self.client_id)
     TOPICS.append(self.fields.topic.location.place + '/' + self.fields.topic.location.location)
+    STATUS = self.status
     return
 
 def on_connect(client, userdata, flags, result_code):
@@ -37,7 +39,6 @@ def on_connect(client, userdata, flags, result_code):
     count = 0
     client.publish("PC/test", payload=count, qos=2, retain=False)
     count += 1
-    # TODO
     client.subscribe(TOPICS)
 
 def on_disconnect(client, user_data, result_code):
@@ -88,7 +89,7 @@ def on_log(client, userdata, level, buf):
 @shared_task
 def mqtt_receive_data():
     # Ask for broker status
-    if TOGGLE:
+    if True:
         # register the signals to be caught
         logger.info("Listening for messages on topic '" + "'. Press Control + C to exit.")
         client.loop_start()
@@ -117,7 +118,6 @@ def mqtt_start(uuid):
 
     # Connect to Broker.
     client.connect(BROKER_HOST, BROKER_PORT)
-    TOGGLE = True
 
     # Recive Data.
     #mqtt_receive_data()
@@ -129,8 +129,16 @@ def mqtt_stop():
 @shared_task
 def main_device_task():
     """ Main function. Get, process and send data """
-    mqtt_start()
-    # Ask for broker status
-    if True:
-        print('GET DATA')
-        client.publish("PC/test", payload='543', qos=2, retain=False)
+    
+    # Ask for active brokers 
+    broker_objects = Broker.objects.filter(status=True)
+    for obj in broker_objects:
+        _read_broker_data(obj)
+
+        if STATUS:
+            # TODO: Change print for log
+            print('GET DATA')
+            print ('SEND DATA')
+            mqtt_start(UUID)
+            for topic in TOPICS:
+                client.publish(topic, payload=543, qos=2, retain=False)
