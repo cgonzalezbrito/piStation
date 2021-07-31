@@ -30,12 +30,9 @@ def toggle_mqtt_status(req):
     if req.method == 'GET':
         if status:
             tasks.mqtt_stop()
-            # TODO: Write database status 
+            qs.update(status=False)
         else:
             tasks.mqtt_start(req.GET.get("input_data"))
-            # TODO: Write database status 
+            qs.update(status=True)
 
-        # write_data.py write_csv()Call the method.
-        #Of the data sent by ajax"input_data"To get by specifying.
-        #write_data.write_csv(req.GET.get("input_data"))
         return HttpResponse()
