@@ -125,20 +125,25 @@ def mqtt_start(uuid):
 def mqtt_stop():
     logger.info("MQTT stop")
 
+def get_data():
+    return '123'
+
 @app.task
 @shared_task
 def main_device_task():
     """ Main function. Get, process and send data """
-    
+
     # Ask for active brokers 
     broker_objects = Broker.objects.filter(status=True)
+    print(broker_objects)
     for obj in broker_objects:
         _read_broker_data(obj)
 
-        if STATUS:
-            # TODO: Change print for log
-            print('GET DATA')
-            print ('SEND DATA')
-            mqtt_start(UUID)
-            for topic in TOPICS:
-                client.publish(topic, payload=543, qos=2, retain=False)
+        # TODO: Change print for log
+        print('GET DATA')
+        data = get_data()
+        print ('SEND DATA')
+        mqtt_start(UUID)
+        for topic in TOPICS:
+            print(topic)
+            client.publish(topic, "123", qos=2, retain=False)

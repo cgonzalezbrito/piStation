@@ -14,7 +14,7 @@ app = Celery('piStation')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.beat_schedule = {
-        'run-me-every-ten-seconds': {
+        'time_schedule': {
             'task': 'mqtt.tasks.main_device_task',
             'schedule': 10.0
             }

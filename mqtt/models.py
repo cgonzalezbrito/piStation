@@ -30,7 +30,7 @@ class Broker(models.Model):
             help_text = 'Optional broker description',
             )
     status = models.BooleanField(
-            default=False
+            default = False
             )
 
     def __str__(self):

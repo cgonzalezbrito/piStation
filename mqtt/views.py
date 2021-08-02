@@ -5,6 +5,9 @@ from .models import Broker, Location, PhysicalVar, Topic, Field, Fields
 
 from . import tasks
 
+import os
+from piStation import celery
+
 def index(request):
     """View function for home page"""
 
@@ -31,8 +34,10 @@ def toggle_mqtt_status(req):
         if status:
             tasks.mqtt_stop()
             qs.update(status=False)
+            qs.update(thread_conn_flag=False)
         else:
             tasks.mqtt_start(req.GET.get("input_data"))
             qs.update(status=True)
+            celery.app.worker_main(argv=['worker','--loglevel=info'])
 
         return HttpResponse()
