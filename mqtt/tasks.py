@@ -25,7 +25,8 @@ def _read_broker_data(self):
     BROKER_HOST = str(self)
     BROKER_PORT = self.broker_port
     CLIENT_ID = str(self.client_id)
-    TOPICS.append(self.fields.topic.location.place + '/' + self.fields.topic.location.location)
+    topic = (self.fields.topic.location.place + '/' + self.fields.topic.location.location, 0)
+    TOPICS.append(topic)
     STATUS = self.status
     return
 
@@ -36,9 +37,6 @@ def on_connect(client, userdata, flags, result_code):
         logger.error("Failed to connect to MQTT Broker: " +
                       mqtt.connack_string(result_code))
 
-    count = 0
-    client.publish("PC/test", payload=count, qos=2, retain=False)
-    count += 1
     client.subscribe(TOPICS)
 
 def on_disconnect(client, user_data, result_code):
@@ -58,24 +56,14 @@ def on_message(client, userdata, msg):
     logger.info("topic: %s, qos: %s" % (msg.topic, msg.qos))
     logger.info(data)
 
-    print("MESSAGE TOPIC: " + print(type(msg.topic)))
     found = 0
-    #TODO
-    #for topic in TOPICS:
-    #    if msg.topic == topic[0]:
-    #        fields = [x for x in FIELDS if x['topic']
-    #                  == msg.topic][0].get('fields')
-    #        if fields:
-    #            process_topic(msg.topic, data, fields[0], fields[1], fields[2])
-    #            found = 1
 
     if found == 0:
         logger.error("Unhandled message topic {} with payload " +
-                      str(msg.topic, msg.payload))
+                      str(msg.topic))
 
 def on_publish(client, userdata, mid):
     logger.debug("mid: " + str(mid))
-
 
 def on_subscribe(client, userdata, mid, granted_qos):
     logger.debug("Subscribed: " + str(mid) + " " + str(granted_qos))
@@ -85,14 +73,6 @@ def on_log(client, userdata, level, buf):
     #if buf.find("ERROR"):
     #    logger.debug("ERROR catched")
     print(buf)
-
-@shared_task
-def mqtt_receive_data():
-    # Ask for broker status
-    if True:
-        # register the signals to be caught
-        logger.info("Listening for messages on topic '" + "'. Press Control + C to exit.")
-        client.loop_start()
 
 def mqtt_start(uuid):
     logger.info("MQTT is starting")
@@ -119,13 +99,17 @@ def mqtt_start(uuid):
     # Connect to Broker.
     client.connect(BROKER_HOST, BROKER_PORT)
 
-    # Recive Data.
-    #mqtt_receive_data()
 
 def mqtt_stop():
     logger.info("MQTT stop")
+    try:
+        client.loop_stop()
+        client.disconnect()
+    except:
+        logger.info("Not client yet")
 
 def get_data():
+    # TODO: GET DATA TO SEND
     return '123'
 
 @app.task
@@ -139,11 +123,12 @@ def main_device_task():
     for obj in broker_objects:
         _read_broker_data(obj)
 
-        # TODO: Change print for log
-        print('GET DATA')
+        logger.info('GET DATA')
         data = get_data()
-        print ('SEND DATA')
+        logger.info('SEND DATA')
         mqtt_start(UUID)
         for topic in TOPICS:
             print(topic)
-            client.publish(topic, "123", qos=2, retain=False)
+            client.loop_start()
+            client.publish(topic[0], data, qos=2, retain=False)
+            client.loop_stop()

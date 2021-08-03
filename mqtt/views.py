@@ -34,7 +34,6 @@ def toggle_mqtt_status(req):
         if status:
             tasks.mqtt_stop()
             qs.update(status=False)
-            qs.update(thread_conn_flag=False)
         else:
             tasks.mqtt_start(req.GET.get("input_data"))
             qs.update(status=True)
