@@ -36,7 +36,10 @@ def toggle_mqtt_status(req):
             qs.update(status=False)
         else:
             tasks.mqtt_start(req.GET.get("input_data"))
+            
             qs.update(status=True)
-            celery.app.worker_main(argv=['worker','--loglevel=info'])
+
+            #celery.app.add_periodic_task(float(qs[0].time_loop_s),celery.app.worker_main(argv=['worker','--loglevel=info']),name='schedule task')
+            #celery.app.worker_main(argv=['worker','--loglevel=info'])
 
         return HttpResponse()

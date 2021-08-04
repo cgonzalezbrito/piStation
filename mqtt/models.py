@@ -3,6 +3,11 @@ import uuid # Required for uuid broker instance
 
 class Broker(models.Model):
     """Model Broker"""
+
+    LOOP_TYPES = (
+            ('c', 'cyclic'),
+            ('o', 'only once')
+            )
     uuid = models.UUIDField(
             primary_key=True,
             default=uuid.uuid4,
@@ -15,10 +20,19 @@ class Broker(models.Model):
             )
     broker_port = models.IntegerField(
             default = 1883,
-            help_text = 'default: 1883',
             )
     client_id = models.CharField(
             max_length = 200,
+            )
+    loop_type = models.CharField(
+            max_length = 1,
+            choices = LOOP_TYPES,
+            default = 'c',
+            help_text = 'How many times the main task is exec?'
+            )
+    time_loop_s = models.IntegerField(
+            default = 10,
+            help_text = 'time in seconds'
             )
     fields = models.ForeignKey(
             'Fields',
