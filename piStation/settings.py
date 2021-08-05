@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 
+from os import environ
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -143,4 +145,9 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_IMPORTS = ("piStation", )
-CELERY_BROKER_URL = 'redis://localhost:6379'
+
+REDIS_HOST = "0.0.0.0"
+REDIS_PORT = 6379
+BROKER_URL = environ.get('REDIS_URL', "redis://{host}:{port}/0".format(
+    host=REDIS_HOST, port=str(REDIS_PORT)))
+CELERY_RESULT_BACKEND = BROKER_URL

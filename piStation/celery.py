@@ -13,12 +13,12 @@ app = Celery('piStation')
 #   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-#app.conf.beat_schedule = {
-#        'time_schedule': {
-#            'task': 'mqtt.tasks.main_device_task',
-#            'schedule': 10.0
-#            }
-#        }
+app.conf.beat_schedule = {
+        'time_schedule': {
+            'task': 'mqtt.tasks.main_device_task',
+            'schedule': 10.0
+            }
+        }
 
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()

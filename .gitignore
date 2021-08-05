@@ -132,3 +132,7 @@ dmypy.json
 # Django
 */migrations/*
 
+# Redis
+dump.rdb
+install_redis.sh
+redis-3.2.1/*
