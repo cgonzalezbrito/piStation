@@ -5,6 +5,8 @@ Open source django based iot device. Web Interface Brokers configuration. Celery
 
 Create and activate a python enviroment: 
 
+  apt-get install python3-venv
+
   python3 -m venv .env  
   soruce .env/bin/activate
 
