@@ -9,6 +9,9 @@ Create and activate a python enviroment:
 
   python3 -m venv .env  
   soruce .env/bin/activate
+  
+  pip install django -U
+  pip install -r requirements.txt
 
 ## Use
 
